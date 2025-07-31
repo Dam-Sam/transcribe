@@ -1,75 +1,117 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState, useRef, useEffect } from "react";
+import { Text, View, StyleSheet, Animated, Pressable, Platform } from "react-native";
+import { Link } from "expo-router";
+import { Button } from "react-native";
+import { useVoice } from '../../hooks/useVoice';
+import { MaterialIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function Index() {
+  const [isListening, setIsListening] = useState(false);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const {
+    transcript,
+    isListening: voiceIsListening,
+    error,
+    startListening,
+    stopListening,
+  } = useVoice();
 
-export default function HomeScreen() {
+  useEffect(() => {
+    if (isListening) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(scaleAnim, {
+            toValue: 1.3,
+            duration: 600,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scaleAnim, {
+            toValue: 1,
+            duration: 600,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    } else {
+      scaleAnim.stopAnimation();
+      scaleAnim.setValue(1);
+    }
+  }, [isListening]);
+
+  const toggleListening = () => {
+    if (isListening) {
+      stopListening();
+      console.log('Stopped listening to the microphone');
+    } else {
+      startListening();
+      console.log('Started listening to the microphone');
+    }
+    setIsListening(!isListening);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <Text style={styles.text}>Live Transcription</Text>
+      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+        <Pressable
+          onPress={toggleListening}
+          style={({ pressed }) => [
+            styles.micButton,
+            { opacity: pressed ? 0.6 : 1 },
+            isListening && styles.listening,
+          ]}
+        >
+          <MaterialIcons
+            name={isListening ? 'mic' : 'mic-none'}
+            size={40}
+            color="white"
+          />
+        </Pressable>
+      </Animated.View>
+      <Text style={styles.status}>
+        {isListening ? 'Listening...' : 'Tap the mic to start'}
+      </Text>
+
+      <Text style={styles.text}>
+        {transcript || 'Press the button and speak...'}
+      </Text>
+
+      <Button title={isListening ? 'Stop Listening' : 'Start Listening'} onPress={toggleListening} />
+      {error && <Text style={styles.text}>{error}</Text>}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#25292e",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  text: {
+    fontSize: 16,
+    color: "#fff",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  button: {
+    padding: 10,
+    backgroundColor: "#007AFF",
+    color: "#fff",
+    borderRadius: 5,
+  },
+  status: {
+    marginTop: 30,
+    fontSize: 18,
+    color: '#ccc',
+  },
+  micButton: {
+    backgroundColor: '#1e1e1e',
+    borderRadius: 50,
+    padding: 20,
+    elevation: 5,
+  },
+  listening: {
+    backgroundColor: '#e53935',
   },
 });
