@@ -12,7 +12,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.oodatguyoo.myapp",
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "We need microphone access to listen to you.",
+        "NSMicrophoneUsageDescription": "We need microphone access to record voices for transcription.",
         "NSSpeechRecognitionUsageDescription": "We need speech recognition to transcribe your voice.",
         "ITSAppUsesNonExemptEncryption": false
       }

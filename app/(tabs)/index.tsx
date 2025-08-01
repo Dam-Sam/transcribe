@@ -4,6 +4,7 @@ import { Link } from "expo-router";
 import { Button } from "react-native";
 import { useVoice } from '../../hooks/useVoice';
 import { MaterialIcons } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
 import { BlurView } from 'expo-blur';
 
 export default function Index() {
@@ -72,12 +73,7 @@ export default function Index() {
       <Text style={styles.status}>
         {isListening ? 'Listening...' : 'Tap the mic to start'}
       </Text>
-
-      <Text style={styles.text}>
-        {transcript || 'Press the button and speak...'}
-      </Text>
-
-      <Button title={isListening ? 'Stop Listening' : 'Start Listening'} onPress={toggleListening} />
+      
       {error && <Text style={styles.text}>{error}</Text>}
     </View>
   );
