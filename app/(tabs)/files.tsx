@@ -3,7 +3,7 @@ import { Text, View, StyleSheet } from "react-native";
 export default function FilesScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Cora is a Flower</Text>
+      <Text style={styles.text}>Cora  Flower</Text>
     </View>
   );
 }

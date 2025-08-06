@@ -4,12 +4,15 @@ import { Link } from "expo-router";
 import { Button } from "react-native";
 import { useVoice } from '../../hooks/useVoice';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Audio } from 'expo-av';
 import { BlurView } from 'expo-blur';
+import * as FileSystem from 'expo-file-system';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Index() {
   const [isListening, setIsListening] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [recordingUri, setRecordingUri] = useState<string | null>(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const {
     transcript,
     isListening: voiceIsListening,
@@ -18,6 +21,11 @@ export default function Index() {
     stopListening,
   } = useVoice();
 
+  /*
+  * Use the Animated API to create a pulsing effect when the mic is active.
+  * This will scale the mic button up and down to indicate that it is listening.
+  * The animation will loop while the mic is active.
+  */
   useEffect(() => {
     if (isListening) {
       Animated.loop(
@@ -39,7 +47,12 @@ export default function Index() {
       scaleAnim.setValue(1);
     }
   }, [isListening]);
-
+  
+  /*
+  * Toggle the listening state and start/stop the voice recognition.
+  * This function will be called when the mic button is pressed.
+  * It will also log the state to the console.
+  */
   const toggleListening = () => {
     if (isListening) {
       stopListening();
@@ -72,6 +85,9 @@ export default function Index() {
       </Animated.View>
       <Text style={styles.status}>
         {isListening ? 'Listening...' : 'Tap the mic to start'}
+      </Text>
+      <Text style={styles.text}>
+        {transcript}
       </Text>
       
       {error && <Text style={styles.text}>{error}</Text>}

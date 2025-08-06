@@ -1,19 +1,20 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "Transcribe",
+    "slug": "transcribe",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "transcribestt",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.oodatguyoo.myapp",
+      "bundleIdentifier": "com.oodatguyoo.transcribe",
       "infoPlist": {
         "NSMicrophoneUsageDescription": "We need microphone access to record voices for transcription.",
         "NSSpeechRecognitionUsageDescription": "We need speech recognition to transcribe your voice.",
+        "NSPhotoLibraryUsageDescription": "This app does not use your photo library, but this permission is required by included libraries.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -22,7 +23,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -39,7 +44,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true
@@ -47,8 +53,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "82faafc7-b5d4-4851-b964-6ac18f9a0c6f"
+        "projectId": "05e34bde-671f-4fb6-99fa-96ac85e27452"
       }
-    }
+    },
+    "owner": "oodatguyoo"
   }
 }
